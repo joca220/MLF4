@@ -422,6 +422,7 @@ GLOBAL.AVK.AVK_TXT=function(pic,x,y,w,h,c)
 	{
 		here.set_size(here.font_size);
 		here.text.setString(val);
+		//console.log("new text ing " + val + " y " + here.text.string)
 		var s=1;
 		
 		while (here.text._getWidth()>GLOBAL.SCREEN.WIDTH-20)
@@ -430,6 +431,8 @@ GLOBAL.AVK.AVK_TXT=function(pic,x,y,w,h,c)
 			here.text.setFontSize(s*here.font_size*here.uni_height);
 		}
 	}
+	
+	
 
 	here.set_size=function(val)
 	{

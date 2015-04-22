@@ -271,7 +271,7 @@
 		this.close_7 = new GLOBAL.AVK.AVK_SPR("game_close_7",582,838,180,180,1);
 		this.sprite.addChild(this.close_7.sprite);
 		GLOBAL.TMP.EL="message_box";
-		this.message_box = new GLOBAL.AVK.AVK_SPR("game_message_box",0,427,768,206,1);
+		this.message_box = new GLOBAL.AVK.AVK_SPR("game_message_box",0,360,768,270,1);//206 in height // 427 *** GLOBAL.SCREEN.HEIGHT-y-here.uni_height;
 		this.sprite.addChild(this.message_box.sprite);
 		GLOBAL.TMP.EL="btn_n";
 		this.btn_n = new GLOBAL.AVK.AVK_BTN("game_btn_n",6,558,180,69,1);
@@ -280,16 +280,16 @@
 		this.btn_y = new GLOBAL.AVK.AVK_BTN("game_btn_y",582,558,180,69,1);
 		this.sprite.addChild(this.btn_y.sprite);
 		GLOBAL.TMP.EL="txt_msg";
-		this.txt_msg = new GLOBAL.AVK.AVK_TXT("",363,472,367,37,1);
+		this.txt_msg = new GLOBAL.AVK.AVK_TXT("",363,472,367,42,1); //all text size height = 37 before and posY = 472
 		this.sprite.addChild(this.txt_msg.sprite);
 		GLOBAL.TMP.EL="txt_msg_end";
-		this.txt_msg_end = new GLOBAL.AVK.AVK_TXT("",363,472,367,37,1);
+		this.txt_msg_end = new GLOBAL.AVK.AVK_TXT("",363,472,367,42,1);
 		this.sprite.addChild(this.txt_msg_end.sprite);
 		GLOBAL.TMP.EL="txt_msg_s1";
-		this.txt_msg_s1 = new GLOBAL.AVK.AVK_TXT("",363,496,367,37,1);
+		this.txt_msg_s1 = new GLOBAL.AVK.AVK_TXT("",363,496,367,42,1);
 		this.sprite.addChild(this.txt_msg_s1.sprite);
 		GLOBAL.TMP.EL="txt_msg_s0";
-		this.txt_msg_s0 = new GLOBAL.AVK.AVK_TXT("",363,450,367,37,1);
+		this.txt_msg_s0 = new GLOBAL.AVK.AVK_TXT("",363,450,367,42,1);
 		this.sprite.addChild(this.txt_msg_s0.sprite);
 		GLOBAL.TMP.EL="txt_record";
 		this.txt_record = new GLOBAL.AVK.AVK_TXT("",384,208,384,107,1);
@@ -314,78 +314,7 @@
 		this.sprite.addChild(this.finger.sprite);
 
 		
-		GLOBAL.TMP.EL="shopCoins";
-		this.shopCoins = new GLOBAL.AVK.AVK_SPR("",0,0,768,1024,1);
-		this.sprite.addChild(this.shopCoins.sprite);
-		
-		
-		GLOBAL.TMP.EL="entercode";
-		this.entercode = new GLOBAL.AVK.AVK_SPR("entercode",22,660,148,101,1);
-		this.sprite.addChild(this.entercode.sprite);
-		GLOBAL.TMP.EL="GVC";
-		this.GVC = new GLOBAL.AVK.AVK_SPR("GVC",219,653,138,115,1);// en los pic es lo que se debe reemplazar
-		this.sprite.addChild(this.GVC.sprite);
-		GLOBAL.TMP.EL="money_2";
-		this.money_2 = new GLOBAL.AVK.AVK_SPR("money1",419,670,101,70,1);
-		this.sprite.addChild(this.money_2.sprite);
-		GLOBAL.TMP.EL="money_3";
-		this.money_3 = new GLOBAL.AVK.AVK_SPR("money2",615,661,109,86,1);
-		this.sprite.addChild(this.money_3.sprite);
-		GLOBAL.TMP.EL="money_4";
-		this.money_4 = new GLOBAL.AVK.AVK_SPR("money3",46,854,89,93,1);
-		this.sprite.addChild(this.money_4.sprite);
-		GLOBAL.TMP.EL="money_5";
-		this.money_5 = new GLOBAL.AVK.AVK_SPR("money4",239,846,109,98,1);
-		this.sprite.addChild(this.money_5.sprite);
-		GLOBAL.TMP.EL="back_shop";
-		this.back_shop = new GLOBAL.AVK.AVK_SPR("back_shop",432,846,99,91,1);
-		this.sprite.addChild(this.back_shop.sprite);
 	
-		GLOBAL.TMP.EL="btn_selCoins_0";
-		this.btn_selCoins_0 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_0",6,646,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_0.sprite);
-		
-		GLOBAL.TMP.EL="btn_selCoins_1";
-		this.btn_selCoins_1 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_1",198,646,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_1.sprite);
-		
-		GLOBAL.TMP.EL="btn_selCoins_2";
-		this.btn_selCoins_2 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_2",390,646,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_2.sprite);
-		
-		GLOBAL.TMP.EL="btn_selCoins_3";
-		this.btn_selCoins_3 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_3",582,646,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_3.sprite);
-		
-		GLOBAL.TMP.EL="btn_selCoins_4";
-		this.btn_selCoins_4 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_4",6,838,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_4.sprite);
-	
-		GLOBAL.TMP.EL="btn_selCoins_5";
-		this.btn_selCoins_5 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_5",198,838,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_5.sprite);
-		
-		GLOBAL.TMP.EL="btn_selCoins_6";
-		this.btn_selCoins_6 = new GLOBAL.AVK.AVK_BTN("game_btn_sel_6",390,838,180,180,1);
-		this.sprite.addChild(this.btn_selCoins_6.sprite);
-		
-		
-		this.btn_selCoins_0.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_1.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_2.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_3.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_4.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_5.set_parent(this.shopCoins.sprite);
-		this.btn_selCoins_6.set_parent(this.shopCoins.sprite);
-		
-		
-		this.entercode.set_parent(this.btn_selCoins_0.sprite);
-		this.GVC.set_parent(this.btn_selCoins_1.sprite);
-		this.money_2.set_parent(this.btn_selCoins_2.sprite);
-		this.money_3.set_parent(this.btn_selCoins_3.sprite);
-		this.money_4.set_parent(this.btn_selCoins_4.sprite);
-		this.money_5.set_parent(this.btn_selCoins_5.sprite);
-		this.back_shop.set_parent(this.btn_selCoins_6.sprite);
 		
 		
 		
@@ -522,6 +451,10 @@
 		GLOBAL.TMP.EL="txt_start";
 		this.txt_start = new GLOBAL.AVK.AVK_TXT("",384,461,384,63,1);
 		this.sprite.addChild(this.txt_start.sprite);
+		
+		GLOBAL.TMP.EL="btn_saisir_code";
+		this.btn_saisir_code = new GLOBAL.AVK.AVK_BTN("saisir_code",555,-128,184,135,1);
+		this.sprite.addChild(this.btn_saisir_code.sprite);
    
     }
 
@@ -535,7 +468,13 @@
     {
         var here=this;
         here.LANGUAGE="TXT";
-		this.gui=[{id:"GAME",element:"txt_help",val:"LNG_1"},{id:"GAME",element:"txt_speed",val:"LNG_2"},{id:"GAME",element:"txt_time",val:"LNG_3"},{id:"GAME",element:"txt_finish",val:"LNG_4"},{id:"GAME",element:"txt_stop",val:"LNG_5"},{id:"GAME",element:"txt_oil",val:"LNG_6"},{id:"GAME",element:"txt_pok",val:"LNG_7"},{id:"MAIN",element:"txt_caption_credits",val:"LNG_8"},{id:"MAIN",element:"txt_credits",val:"LNG_9"},{id:"GAME",element:"txt_start",val:"LNG_10"},{id:"GAME",element:"txt_left",val:"LNG_11"},{id:"GAME",element:"txt_right",val:"LNG_12"},{id:"GAME",element:"txt_help_pc",val:"LNG_13"},{id:"GAME",element:"txt_center",val:"LNG_14"}];
+		this.gui=[{id:"GAME",element:"txt_help",val:"LNG_1"},{id:"GAME",element:"txt_speed",val:"LNG_2"},
+		          {id:"GAME",element:"txt_time",val:"LNG_3"},{id:"GAME",element:"txt_finish",val:"LNG_4"},
+		          {id:"GAME",element:"txt_stop",val:"LNG_5"},{id:"GAME",element:"txt_oil",val:"LNG_6"},
+		          {id:"GAME",element:"txt_pok",val:"LNG_7"},{id:"MAIN",element:"txt_caption_credits",val:"LNG_8"},
+		          {id:"MAIN",element:"txt_credits",val:"LNG_9"},{id:"GAME",element:"txt_start",val:"LNG_10"},
+		          {id:"GAME",element:"txt_left",val:"LNG_11"},{id:"GAME",element:"txt_right",val:"LNG_12"},
+		          {id:"GAME",element:"txt_help_pc",val:"LNG_13"},{id:"GAME",element:"txt_center",val:"LNG_14"}];
 		this.gui.id = false;
 		this.gui.element = false;
 		this.gui.val = true;

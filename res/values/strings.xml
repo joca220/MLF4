@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TipTap</string>
+    <string name="nombre">Digita tu nombre?</string>
+      <string name="hola">aceptar</string>
 </resources>

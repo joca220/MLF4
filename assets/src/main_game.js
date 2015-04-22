@@ -1,7 +1,8 @@
 GLOBAL.AVK.APP=function()
 {
 	var here=this;
-	
+	var currentTime = 0;
+	var gameLoaded = false;
 	here.RUN=false;
 	here.BUSY=false;
 	here.MSG=false;
@@ -44,8 +45,8 @@ GLOBAL.AVK.APP=function()
 	var napr=0;
 	var br=null;
 	var bl=null;
-	var triesDoneByUser = 0;
-	var payedFullVersion = false;
+	var triesDoneByUser = -1;
+	
 	var money_cnt=0;
 	var record_cnt=0;
 	var step_cnt=0;
@@ -68,6 +69,7 @@ GLOBAL.AVK.APP=function()
 	
 	var idPurchase = 0;
 	
+
 	
 	here.push=function(ar,val)
 	{
@@ -343,7 +345,6 @@ GLOBAL.AVK.APP=function()
 		is_crush=false;
 		
 		show_shop();
-		hide_shopCoins();
 		step_cnt=0;
 		max_speed=start_max_speed;
 		speed=start_speed;
@@ -408,20 +409,16 @@ GLOBAL.AVK.APP=function()
 		if ((reset)||(buyed_boat==null)||((buyed_boat=="")))
 			buyed_boat=1;
 		
+		
 		money_cnt*=1;
 		record_cnt*=1;
 		current_boat*=1;
 		buyed_boat*=1;
 		
-		//money_cnt = 2000;//buque
+	//	money_cnt = 500;//buque
 	}
 	
-	function saveTriesDone()
-	{
-		triesDoneByUser = triesDoneByUser + 1;
-		GLOBAL.STORAGE.save("triesDone",triesDoneByUser);
-		
-	}
+	
 	
 	function save()
 	{
@@ -430,6 +427,7 @@ GLOBAL.AVK.APP=function()
 		GLOBAL.STORAGE.save("record",record_cnt);
 		GLOBAL.STORAGE.save("current_boat",current_boat);
 		GLOBAL.STORAGE.save("buyed_boat",buyed_boat);
+		
 	}
 	here.save=save;
 	
@@ -440,14 +438,17 @@ GLOBAL.AVK.APP=function()
 		GLOBAL.ASSETS.GAME.btn_add_money.sprite.setPositionX(GLOBAL.ASSETS.GAME.txt_money.sprite.getPositionX()-GLOBAL.ASSETS.GAME.txt_money.text._getWidth()-GLOBAL.ASSETS.GAME.btn_add_money.uni_width*1.5);
 	}
 	
+
 	
 	here.show_msgFinal =function(msg,f_y,f_n,f_f,end_str,capt,call_back)
 	{
+		console.log("entra en msgFinal");
 		show_msg(msg,finish,f_n,f_f,end_str,capt,call_back);
 	}
 	
 	function show_msg(msg,f_y,f_n,f_f,end_str,capt,call_back)
 	{
+		console.log("msj es " + msg);
 		on_y=f_y;
 		on_n=f_n;
 		on_f=f_f;
@@ -461,13 +462,15 @@ GLOBAL.AVK.APP=function()
 
 		on_c=call_back;
 		
-		GLOBAL.ASSETS.GAME.btn_n.sprite.setVisible(on_n!=null);
-		GLOBAL.ASSETS.GAME.btn_y.sprite.setVisible(on_y!=null);
+		 
+			 GLOBAL.ASSETS.GAME.btn_n.sprite.setVisible(on_n!=null);
+			 GLOBAL.ASSETS.GAME.btn_y.sprite.setVisible(on_y!=null);
 		
-		if (capt!="")
-		{
-			GLOBAL.ASSETS.GAME.txt_msg.set_text("");
+		
+		 if (capt!="") {
 			
+			GLOBAL.ASSETS.GAME.txt_msg.set_text("");
+			//GLOBAL.ASSETS.GAME.txt_enterCode.set_text("");
 			if (end_str!="")
 			{
 				GLOBAL.ASSETS.GAME.txt_msg_s0.set_text(capt);
@@ -483,8 +486,10 @@ GLOBAL.AVK.APP=function()
 			}
 		}else
 		{
+			
 			GLOBAL.ASSETS.GAME.txt_msg_s0.set_text("");
 			GLOBAL.ASSETS.GAME.txt_msg_s1.set_text("");
+			//GLOBAL.ASSETS.GAME.txt_enterCode.set_text("");
 			if (end_str!="")
 			{
 				GLOBAL.ASSETS.GAME.txt_msg.set_text(msg+" ");
@@ -556,7 +561,10 @@ GLOBAL.AVK.APP=function()
 			{
 				if (first_play)
 					cc.audioEngine.playEffect(res.finish);
-				show_msg(GLOBAL.STRINGS.get_str("lng_9")+GLOBAL.MONETIZATION.record_cost,function(){here.add_money(GLOBAL.MONETIZATION.record_cost)},null,null," ",GLOBAL.STRINGS.get_str("lng_8")+record_cnt);
+				//show_msg(GLOBAL.STRINGS.get_str("lng_9")+GLOBAL.MONETIZATION.record_cost,function(){here.add_money(GLOBAL.MONETIZATION.record_cost)},null,null," ",GLOBAL.STRINGS.get_str("lng_8")+record_cnt);
+				show_msg(""+GLOBAL.MONETIZATION.record_cost+"",function(){here.add_money(GLOBAL.MONETIZATION.record_cost)},null,null,
+						 GLOBAL.STRINGS.get_str("lng_9"),GLOBAL.STRINGS.get_str("lng_8")+record_cnt);
+				
 				is_new_record=false;
 			}
 		}
@@ -585,40 +593,13 @@ GLOBAL.AVK.APP=function()
 	
 	
 	
-	function show_shopCoins()
-	{
-		function on_progress(el,val)
-		{
-			el.sprite.setPositionY(-(1-val)*GLOBAL.SCREEN.HEIGHT);
-		}
-		
-		function on_finish(el)
-		{
-			el.sprite.setPositionY(0);
-		}
-
-		GLOBAL.ASSETS.GAME.shopCoins.sprite.setPositionY(-GLOBAL.SCREEN.HEIGHT);
-		GLOBAL.ASSETS.GAME.shopCoins.sprite.setVisible(true);
-		GLOBAL.ACTION.start(GLOBAL.ASSETS.GAME.shopCoins,0,0.5,on_progress,on_finish)
-	}
 	
-	function hide_shopCoins()
-	{
-		function on_progress(el,val)
-		{
-			el.sprite.setPositionY(-val*GLOBAL.SCREEN.HEIGHT);
-		}
-		
-		function on_finish(el)
-		{
-			el.sprite.setVisible(false);
-		}
-		
-		GLOBAL.ACTION.start(GLOBAL.ASSETS.GAME.shopCoins,0,0.5,on_progress,on_finish)
-	}
+	
+	
 	
 	function finish()
 	{
+		console.log("esta en finish del msg");
 		is_crush=false;
 		boat.getParent().removeChild(boat);
 		GLOBAL.ASSETS.GAME.field.sprite.addChild(boat);
@@ -667,51 +648,75 @@ GLOBAL.AVK.APP=function()
 		GLOBAL.ASSETS.GAME.txt_record.sprite.setVisible(true);
 		function buyed_continue()
 		{
-			is_crush=false;
-			boat.getParent().removeChild(boat);
-			GLOBAL.ASSETS.GAME.field.sprite.addChild(boat);
 			
-			GLOBAL.ASSETS.GAME.txt_record.sprite.setVisible(false);
-			here.add_money(-GLOBAL.MONETIZATION.life_cost);
-			speed=start_speed;
-			px=get_position(current_pos);
-			boat.setPosition(px,currentH);
-			GLOBAL.ASSETS.GAME.light.sprite.setPosition(px,currentH);
-
-			if (get_position(current_pos+1)>px)
-				napr=1;
-			else
-				napr=-1;
-
-			if (napr==1)
+			if (money_cnt<GLOBAL.MONETIZATION.life_cost)
 			{
-				br.setVisible(true);
-				bl.setVisible(false);
-			}else
-			{
-				br.setVisible(false);
-				bl.setVisible(true);
+				
+				
+				
+			} else {
+				is_crush=false;
+				boat.getParent().removeChild(boat);
+				GLOBAL.ASSETS.GAME.field.sprite.addChild(boat);
+			
+				GLOBAL.ASSETS.GAME.txt_record.sprite.setVisible(false);
+				here.add_money(-GLOBAL.MONETIZATION.life_cost);
+				speed=start_speed;
+				px=get_position(current_pos);
+				boat.setPosition(px,currentH);
+				GLOBAL.ASSETS.GAME.light.sprite.setPosition(px,currentH);
+
+				if (get_position(current_pos+1)>px)
+					napr=1;
+				else
+					napr=-1;
+
+				if (napr==1)
+				{
+					br.setVisible(true);
+					bl.setVisible(false);
+				}else
+				{
+					br.setVisible(false);
+					bl.setVisible(true);
+				}
 			}
 		}
 		
 		if (money_cnt<GLOBAL.MONETIZATION.life_cost)
 		{
-			if (GLOBAL.MONETIZATION.have_iap)
-				show_msg(GLOBAL.STRINGS.get_str("lng_5")+GLOBAL.MONETIZATION.life_cost,function(){},finish,function(){show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){},finish,before_finish,"?",GLOBAL.STRINGS.get_str("lng_3"),GLOBAL.MONETIZATION.buy_money);},"?");
-			else {
-				saveTriesDone();
-				if(triesDoneByUser >= 100 && !payedFullVersion){
-					console.log("sera que eso es lo que repite");
-					show_msg(GLOBAL.STRINGS.get_str("lng_14"),function(){console.log("debe desbloquear game");},finish,null);
-				} else {
-					show_msg(GLOBAL.STRINGS.get_str("lng_6"),finish,null,null);
-				}
-			  }
+			
+			show_msg(GLOBAL.STRINGS.get_str("lng_5")+GLOBAL.MONETIZATION.life_cost,function(){},finish,function(){
+				shouldHideMsg = false;
+				show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){
+					console.log("should be load AdColony");
+					var info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gameLoaded2","()Ljava/lang/String;"); 
+					show_msg(GLOBAL.STRINGS.get_str("lng_17"),function(){
+						shouldHideMsg = true;
+						
+						if(watchVideoSuccess){
+							console.log("claim correctly");
+							watchVideoSuccess = false;
+							here.add_money(20);
+							save();
+							
+						}
+						hide_msg();
+						
+						},null,null);
+					
+					},finish,null,"?",
+					GLOBAL.STRINGS.get_str("lng_3"),GLOBAL.MONETIZATION.buy_money);},"?");
+		
 		}else 
 		{
 			show_msg(GLOBAL.STRINGS.get_str("lng_5")+GLOBAL.MONETIZATION.life_cost,function(){},finish,buyed_continue,"?");
 		}
+		
+		//show_msg(GLOBAL.STRINGS.get_str("lng_5")+GLOBAL.MONETIZATION.life_cost,function(){},finish,buyed_continue,"?");
 	}
+	
+	
 	
 	function select_bot(num)
 	{
@@ -719,15 +724,27 @@ GLOBAL.AVK.APP=function()
 		{//покупка
 			if (money_cnt<GLOBAL.MONETIZATION.cost[num])
 			{
-				//AQUI deberiamos interceptar y cambiar los datos para la compra
-				show_shopCoins();
-				hide_shop();
-				/*if (GLOBAL.MONETIZATION.have_iap)
-					show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){},function(){},function(){select_bot(buyed_boat)},"?",GLOBAL.STRINGS.get_str("lng_3"),GLOBAL.MONETIZATION.buy_money);
-				else 
-					show_msg(GLOBAL.STRINGS.get_str("lng_3"),function(){},null,null);*/
-			}else 
-			{
+				shouldHideMsg = false; 
+				show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){
+					console.log("should be load AdColony");
+					var info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gameLoaded2","()Ljava/lang/String;"); 
+					show_msg(GLOBAL.STRINGS.get_str("lng_17"),function(){
+						shouldHideMsg = true;
+						
+						if(watchVideoSuccess){
+							console.log("claim correctly");
+							watchVideoSuccess = false;
+							here.add_money(20);
+							save();
+							
+						}
+						hide_msg();
+						
+						},null,null);
+					},finish,null,"?",
+					GLOBAL.STRINGS.get_str("lng_3"),GLOBAL.MONETIZATION.buy_money);
+			
+			} else {
 				show_msg(GLOBAL.STRINGS.get_str("lng_2")+GLOBAL.MONETIZATION.cost[num],function(){here.add_money(-GLOBAL.MONETIZATION.cost[buyed_boat]);buyed_boat++;select_bot(buyed_boat-1)},function(){},null,"?");
 			}
 			return;
@@ -763,48 +780,7 @@ GLOBAL.AVK.APP=function()
 		save();
 	}
 	
-	function checkCoinsPackInfo()
-	{
-	    var info = null;
-	    if(!cc.sys.isNative) info = "1.99$,500,2.99$,2500,4.99$,5000,9.99$,10000";
-	    else info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","checkCoinsPackInfo","()Ljava/lang/String;");
-	    info = info.split("&");
-	    
-	    for(var i = 0; i < info.length; i = i + 2){
-	        var item = {};
-	        item.price = info[i];
-	        item.amount = parseInt(info[i + 1]);
-	        coinsPackInfo.push(item);
-	    }
-	}
-	
-	function toBuyGoods()
-	{
-	   jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","toBuyGoods","(I)V", idPurchase);
-	   show_msg(GLOBAL.STRINGS.get_str("lng_16"),null,null,null);
-	}
-	
-	function gotoCGV()
-	{
-	        jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gotoCGV","()V");
-	}
-	
-	function enterCode(){
-		/* var code = this.codeTxt.getString();
-         if(!code.length) return;
-         var r = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","toEnterCode","(Ljava/lang/String;)I", code);
-         var msj = "";
-         
-         if (r < 0) {
-	 	       msj=  "Attention le code "+ code +" n`est pas valide";
-	 	    } else {
-	 	        msj =  "Paiement accepté";
-	 	    }
-	 	    
-        	showBuyingMsg(msj);*/
-         
-	}
-	
+
 	
 	
 	here.INIT=function()
@@ -850,7 +826,9 @@ GLOBAL.AVK.APP=function()
 		
 		GLOBAL.MONETIZATION.start();
 		load();
-		checkCoinsPackInfo();
+		var d = new Date();
+		currentTime = d.getTime();
+		console.log("leer miliseconds" );
 		
 		GLOBAL.ASSETS.GAME.btn_add_money.sprite.setVisible(GLOBAL.MONETIZATION.have_iap);
 		GLOBAL.ASSETS.GAME.btn_add_money.enabled=GLOBAL.MONETIZATION.have_iap;
@@ -872,6 +850,7 @@ GLOBAL.AVK.APP=function()
 		
 		GLOBAL.ASSETS.GAME.txt_msg_end.set_align(0);
 		
+				
 		GLOBAL.ASSETS.GAME.txt_money.set_color(48,48,48,255);
 		GLOBAL.ASSETS.GAME.txt_money.set_align(1);
 		GLOBAL.ASSETS.GAME.txt_money.set_text(money_cnt);
@@ -942,13 +921,21 @@ GLOBAL.AVK.APP=function()
 		bl=GLOBAL.ASSETS.GAME["l_"+current_boat].sprite;
 		br=GLOBAL.ASSETS.GAME["r_"+current_boat].sprite;
 		
+		   
 		init_map();
 		select_bot(current_boat);
+		
+			     
 	}
 	
 	here.EVENT=function(act,wnd,el,id,x,y,tag)
 	{
 		//cc.log(act+":"+wnd+":"+el+":"+id);
+	
+		
+		if(!gameLoaded){
+			return;
+		}
 		if ((GLOBAL.APP.BUSY)&&(el!="btn_snd")&&(el!="btn_no_snd"))
 			return;
 
@@ -962,12 +949,19 @@ GLOBAL.AVK.APP=function()
 				case "back":
 					if (!is_crush)
 					{
+						
 						if (here.RUN)
 						{
 							napr=-napr;
 							first=false;
-						}else 
+						}else {
+							timesPlaying = timesPlaying + 1;
+							if(timesPlaying > 1){
+								console.log("should be load AdColony");
+								var info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gameLoaded3","()Ljava/lang/String;"); 
+							}
 							hide_shop();
+						}
 						
 						here.RUN=true;
 						GLOBAL.ASSETS.GAME.start.sprite.setVisible(false);
@@ -1045,6 +1039,29 @@ GLOBAL.AVK.APP=function()
 					cc.audioEngine.setEffectsVolume(1);
 					vol=1;
 					break;
+				case "btn_saisir_code":
+					shouldHideMsg = false;
+					show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){
+						console.log("should be load AdColony");
+						//hide_msg();
+						//shouldHideMsg = true;
+						var info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gameLoaded2","()Ljava/lang/String;"); 
+						show_msg(GLOBAL.STRINGS.get_str("lng_17"),function(){
+							shouldHideMsg = true;
+							
+							if(watchVideoSuccess){
+								console.log("claim correctly");
+								watchVideoSuccess = false;
+								here.add_money(20);
+								save();
+								
+							}
+							hide_msg();
+							
+							},null,null);
+						},finish,null,"?",
+						" ",GLOBAL.MONETIZATION.buy_money);
+					break;
 				case "btn_sel_0":
 					select_bot(0);
 					break;
@@ -1069,54 +1086,6 @@ GLOBAL.AVK.APP=function()
 				case "btn_sel_7":
 					select_bot(7);
 					break;
-					
-				case "btn_selCoins_0":
-					 hide_shopCoins();
-					 show_shop();
-					break;
-				case "btn_selCoins_1":
-					gotoCGV();
-					break;
-				case "btn_selCoins_2":
-					show_msg((GLOBAL.STRINGS.get_str("lng_15").replace("&", "" + coinsPackInfo[0].amount)).replace("%" , "" + coinsPackInfo[0].price),
-							function(){
-							idPurchase = 2;
-							toBuyGoods();
-							},
-							function(){show_shopCoins();},null);
-					hide_shopCoins();
-					break;
-				case "btn_selCoins_3":
-					show_msg((GLOBAL.STRINGS.get_str("lng_15").replace("&", "" + coinsPackInfo[1].amount)).replace("%" , "" + coinsPackInfo[1].price),
-							function(){
-							idPurchase = 3;
-							toBuyGoods();
-							},
-							function(){show_shopCoins();},null);
-					hide_shopCoins();
-					break;
-				case "btn_selCoins_4":
-					show_msg((GLOBAL.STRINGS.get_str("lng_15").replace("&", "" + coinsPackInfo[2].amount)).replace("%" , "" + coinsPackInfo[2].price),
-							function(){
-							idPurchase = 4;
-							toBuyGoods();},
-							function(){show_shopCoins();},null);
-					hide_shopCoins();
-					break;
-				case "btn_selCoins_5":
-					show_msg((GLOBAL.STRINGS.get_str("lng_15").replace("&", "" + coinsPackInfo[3].amount)).replace("%" , "" + coinsPackInfo[3].price),
-							function(){
-							idPurchase = 5;
-							toBuyGoods();
-							},
-							function(){show_shopCoins();},null);
-					hide_shopCoins();
-					
-					break;
-				case "btn_selCoins_6":
-					 hide_shopCoins();
-					 show_shop();
-					break;
 				case "btn_add_money":
 					show_msg(GLOBAL.STRINGS.get_str("lng_4")+GLOBAL.MONETIZATION.num_buy_money,function(){},function(){},null,"?","",GLOBAL.MONETIZATION.buy_money);
 					break;
@@ -1130,14 +1099,21 @@ GLOBAL.AVK.APP=function()
 				switch (el)
 				{
 				case "btn_y":
+						
+					if(shouldHideMsg){
+						console.log("hide msgg");
+						hide_msg();
+					}
 					on_y();
-					hide_msg()
-					break;
+					
+				   break;
 				case "btn_n":
 					on_f=null;
 					on_c=null;
 					on_n();
-					hide_msg()
+					hide_msg();
+					
+					
 					break;
 				}
 			}
@@ -1171,6 +1147,19 @@ GLOBAL.AVK.APP=function()
 	
 	here.UPDATE=function(tk)
 	{
+		
+		//console.log("updateGame 2");
+	if(!gameLoaded){	
+		var d = new Date();
+		var n = d.getTime();
+		//console.log("currenTime " + (n - currentTime) );
+		if(((n - currentTime) >= 7000) && !gameLoaded){
+			gameLoaded = true;
+			console.log("should be load adColony");
+			var info = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity","gameLoaded","()Ljava/lang/String;"); // send info that game was loaded
+			return;
+		}
+	}
 		scale_val+=tk*scale_sign/3;
 		if (scale_val<0.75)
 			scale_val=1;
@@ -1179,6 +1168,8 @@ GLOBAL.AVK.APP=function()
 		GLOBAL.ACTION.update(tk);
 		if (here.MSG)
 			return;
+		
+		
 		
 		for (var i=0;i<particles.length;i++)
 		{
@@ -1213,6 +1204,10 @@ GLOBAL.AVK.APP=function()
 			if (speed<max_speed*(1+current_boat*GLOBAL.MONETIZATION.speed_decrease_characters))
 				speed=max_speed*(1+current_boat*GLOBAL.MONETIZATION.speed_decrease_characters);
 			current_pos+=tk*GLOBAL.SCREEN.HEIGHT/speed;
+			
+			
+		
+			
 		}else
 		{
 			if(speed<200)
@@ -1221,6 +1216,8 @@ GLOBAL.AVK.APP=function()
 			speed_fall*=0.9;
 			boat_pos_fall+=tk*GLOBAL.SCREEN.HEIGHT/speed;
 			boat_pos-=tk*GLOBAL.SCREEN.HEIGHT/speed_fall;
+			
+			
 		}
 		
 		if (!GLOBAL.SCREEN.IS_MOBILE)
@@ -1275,8 +1272,10 @@ GLOBAL.AVK.APP=function()
 		if (is_crush)
 		{
 			boat.setPosition(boat.getPositionX()+prog,currentH+boat_pos);
-			if (currentH+boat_pos+GLOBAL.ASSETS.GAME.l_0.uni_height<0)
-				before_finish();
+			if (currentH+boat_pos+GLOBAL.ASSETS.GAME.l_0.uni_height<0) {
+					before_finish();
+				
+			}
 		}else
 			boat.setPosition(boat.getPositionX()+prog,currentH);
 		//boat.setPosition(get_position(current_pos),currentH);
@@ -1335,50 +1334,16 @@ GLOBAL.AVK.APP=function()
 		if ((!is_crush)&&(Math.abs(boat.getPositionX()-px)>deltaX))
 			fall_finish();
 	}
-}
-var coinsPackInfo = [];
+}//04-21 11:07:17.711: I/AdColony(24383): Ads are not ready to be played, as they are still downloading.
+var timesPlaying = 0;
+var shouldHideMsg = true;
+var watchVideoSuccess = false;
 function onBuySuccess(goodsId, isOnResume)
 {
 	  console.log("buy Success " + goodsId);
- switch(goodsId){
- 	case 1:
- 		break;
- 	case 2:
-		GLOBAL.APP.add_money(coinsPackInfo[0].amount);
- 		GLOBAL.APP.save();
- 		break;
- 	case 3:
-		GLOBAL.APP.add_money(coinsPackInfo[1].amount);
- 		GLOBAL.APP.save();
+	  watchVideoSuccess = true;
+	 // GLOBAL.APP.add_money(20);
+	  //GLOBAL.APP.save();
+	// GLOBAL.APP.show_msgFinal(GLOBAL.STRINGS.get_str("lng_17"),null,null,null);
  
- 		break;
- 	case 4:
-		GLOBAL.APP.add_money(coinsPackInfo[2].amount);
- 		GLOBAL.APP.save();
- 		break;
- 	case 5:
- 		GLOBAL.APP.add_money(coinsPackInfo[3].amount);
- 		GLOBAL.APP.save();
- 		
- 		break;
- }
-
- console.log("buy Success");
- GLOBAL.APP.show_msgFinal(GLOBAL.STRINGS.get_str("lng_17"),null,null,null);
- 
-}
-
-function onBuyError(goodsId, insufficientCredit, isOnResume){
-	   
-    var msj = "";
-  
-   if(insufficientCredit == 0){
-   	msj = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture.";
-   } else {
-   	msj = "Votre achat n'a pu être effectué car le crédit de votre compte est insuffisant.";
-   }
-  
-   console.log("buy Failed");
-   GLOBAL.APP.show_msgFinal(msj,null,null,null);
-	
 }

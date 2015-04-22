@@ -30,29 +30,49 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
-import fr.pixtel.pxinapp.PXInapp;
-import fr.pixtel.pxinapp.PXInappProduct;
+
+import com.jirbo.adcolony.AdColony;
+import com.jirbo.adcolony.AdColonyAd;
+import com.jirbo.adcolony.AdColonyAdAvailabilityListener;
+import com.jirbo.adcolony.AdColonyAdListener;
+import com.jirbo.adcolony.AdColonyV4VCAd;
+import com.jirbo.adcolony.AdColonyVideoAd;
 
 
 // The name of .so is specified in AndroidMenifest.xml. NativityActivity will load it automatically for you.
 // You can use "System.loadLibrary()" to load other .so files.
 
-public class AppActivity extends Cocos2dxActivity implements PXInapp.PaymentCallback{
+public class AppActivity extends Cocos2dxActivity implements AdColonyAdListener, AdColonyAdAvailabilityListener{
 
     static String hostIPAdress = "0.0.0.0";
     private static AppActivity app = null;
+    static boolean giveMoney = false;
+
+	/*final static String APP_ID  = "app60800739de7744f691";
+	final static String ZONE_ID = "vzce2bcb9b71454d5b91";
+	final static String ZONE_ID2 = "vz1bbd9c8d1493499193";// - 4VCV4 -v4vcabb26b8008ab44da9f
+    final static String ZONE_ID3 = "vz4187bf0d88604d769f";*/
+    
+    
+    // ID TEST
+    final static String APP_ID  = "app185a7e71e1714831a49ec7";
+    final static String ZONE_ID = "vz06e8c32a037749699e7050";
+    final static String ZONE_ID2 = "vz1fd5a8b2bf6841a0a4b826";
+    final static String ZONE_ID3 = "vz06e8c32a037749699e7050";
+    
+    
+    // static EditText txtNombre;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	// TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        
+        //setContentView(R.layout.entercode);
         if(nativeIsLandScape()) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         } else {
@@ -63,9 +83,21 @@ public class AppActivity extends Cocos2dxActivity implements PXInapp.PaymentCall
         }
         hostIPAdress = getHostIpAddress();
         
-        PXInapp.create( this, "A024005229957220553164658470315538893739F7007FF", false );
-        PXInapp.setPaymentCallback(this);
+        
+        AdColony.configure( this, "version:1.0,store:google", APP_ID, ZONE_ID, ZONE_ID2, ZONE_ID3);
+      	 
+   	   AdColony.addAdAvailabilityListener(this);
+
+   	    // Disable rotation if not on a tablet-sized device (note: not
+   	    // necessary to use AdColony).
+   	    if ( !AdColony.isTablet() )
+   	    {
+   	      setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+   	    }
         app = this;
+        
+        
+        
     }
     
     @Override
@@ -95,178 +127,89 @@ public class AppActivity extends Cocos2dxActivity implements PXInapp.PaymentCall
     protected void onPause() 
     {
         super.onPause();
-        PXInapp.pause();
     }
      
     @Override
     protected void onResume() 
     {
         super.onResume();
-        PXInapp.resume();
     }
     
     @Override
     public void onDestroy()
     {
     	super.onDestroy();
-    	PXInapp.destroy();
     }
     
-    
-    private final static int	LEVEL_UNLOCK		  	= 1;
-   	private final static int	GAME_COINS1		  	    = 2;
-   	private final static int	GAME_COINS2		  	    = 3;
-   	private final static int	GAME_COINS3		  	    = 4;
-   	private final static int	GAME_COINS4		  	    = 5;
-   	
-    public static String checkCoinsPackInfo()
-    {
-    	String info = "";
-    	
-    	PXInappProduct item = PXInapp.getInappProduct(GAME_COINS1);
-		info += item.priceString + "&" + item.amount + "&";
-		
-    	item = PXInapp.getInappProduct(GAME_COINS2);
-		info += item.priceString + "&" + item.amount + "&";
-		
-    	item = PXInapp.getInappProduct(GAME_COINS3);
-		info += item.priceString + "&" + item.amount + "&";
-		
-    	item = PXInapp.getInappProduct(GAME_COINS4);
-		info += item.priceString + "&" + item.amount;
-		
-    	return info;
-    }
-    
-    public static void toBuyGoods(final int goodsId)
-	{
-		PXInapp.clearPayment(goodsId);	
-		int result = PXInapp.initiatePayment(goodsId);
-   		if(result >= 0){
-   			//showAlertDialog("Purchasing", "Waiting...", false, false);
-   		}else if (result<0){
-   			String msgId = null;
-    		switch(result){
-	    		case PXInapp.RESULT_ALREADY_PURCHASED:
-	    			//If it can be purchased again and again, it means ClearPayment() has not been called!
-	    			app.onPayment(PXInapp.getInappProduct(goodsId), 1);
-	    			break;
-	    		case PXInapp.RESULT_PAYMENT_IN_PROGRESS:
-	    			//msgId = "inProgress";
-	    			break;
-	    		case PXInapp.RESULT_ERROR_UNINITIALIZED_LIBRARY:
-	    			msgId = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-	    			break;
-	    		case PXInapp.RESULT_ERROR_BAD_INAPPPRODUCT:
-	    			msgId = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-	    			break;
-	    		case PXInapp.RESULT_FAILED:
-	    			msgId = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-	    			break;
-    		}
-    		//final int res = -1;
-    		if(msgId != null){
-    			app.runOnGLThread(new Runnable() {
-    	            @Override
-    	            public void run() {
-    	         	   Cocos2dxJavascriptJavaBridge.evalString("onBuyError("+ goodsId +"," + 0 + ")");
-    	            }
-    	        });
-    		}
-    	}
-	}
-
-    @Override
-	public void onPayment(final PXInappProduct inappProduct,int result) 
-	{
-    	if (inappProduct==null)
-			return;
-    	result = 0;//buque 161.90,742.25,0.00,1,1,1.00,3,0,0 
-		
-    	/*if(!gameLoaded){
-    		backupResult = result;
-    		backupAppProduct = inappProduct;
-    		System.out.println("Entro onPaymen y no cargo todo: " + inappProduct.id);
-    		return;
-    	}*/
-    	
-    	if (result<0)
-		{
-			String errMsg = "";
-			boolean insuficcientCredit = false;
-			switch (result)
-			{
-				case PXInapp.PAYMENT_ERROR:
-					errMsg = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-					break;
-				case PXInapp.PAYMENT_TIMEOUT:
-					errMsg = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-					break;
-				case PXInapp.PAYMENT_INSUFFICIENT_CREDIT:
-					insuficcientCredit = true;
-					errMsg = "Votre achat n'a pu être effectué car le crédit de votre compte est insuffisant.";
-					break;
-				case PXInapp.PAYMENT_OFFER_NOT_AVAILABLE:
-					errMsg = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-					break;
-				default:
-					errMsg = "Votre achat n'a pas été validé. Vous étiez peut-être hors couverture, ou n'aviez pas suffisamment de crédit.";
-			}
-			
-			final int option = (insuficcientCredit) ? 1 : 0;
-			app.runOnGLThread(new Runnable() {
-	            @Override
-	            public void run() {
-	               Cocos2dxJavascriptJavaBridge.evalString("onBuyError("+ inappProduct.id + "," + option + "," + false +")");
-	            }
-	        });
-			
-		}
-		else
-		{
-			
-			// mirar si se desbloquea un level entra en buySucess .. and mirar el id:
-			app.runOnGLThread(new Runnable() {
-	            @Override
-	            public void run() {
-	            	System.out.println("id de compra es: " + inappProduct.id);
-	            	String evalStr = "onBuySuccess("+inappProduct.id + "," + false +")";
-	            	Cocos2dxJavascriptJavaBridge.evalString(evalStr);
-	            	//Cocos2dxJavascriptJavaBridge.evalString("console.log(\"JavaScript Java bridge!\")");
-	            	
-	            }
-	        });
-		}
-	
-	}
-    
-    public static int toEnterCode(final String code)
-	{
-    	int result = 0;
-    	if (code.length() > 0) 
-    		result = PXInapp.checkPaymentCode(code);
-    	return result;
-	}
-    
-    public static void gotoCGV()
-	{
-		//System.out.println("deberia abrir esto");
-		Uri 	uri;
-		Intent 	browser;
-		String 	url = PXInapp.getUrl("CGV"); 
-		if (url==null)
-			return;
-		
-		browser 	= new Intent(Intent.ACTION_VIEW);
-		uri 		= Uri.parse(url);
-		browser.setData(uri);
-		getContext().startActivity(browser);
-	}
-    
+   
     public static String gameLoaded(){
     	String info = "loaded";
-    	System.out.println("games is totally loaded");
+    	giveMoney = false;
+    	System.out.println("debe correr colony");
+    	  AdColonyVideoAd ad = new AdColonyVideoAd( ZONE_ID ).withListener( app );
+		 ad.show();
     	return info;
+    }
+    
+    
+    public static String gameLoaded3(){
+    	String info = "loaded";
+    	giveMoney = false;
+    	System.out.println("debe correr colony");
+    	  AdColonyVideoAd ad = new AdColonyVideoAd( ZONE_ID ).withListener( app );
+		 ad.show();
+    	return info;
+    }
+    public static String gameLoaded2(){
+    	String info = "loaded";
+    	giveMoney = true;
+    	System.out.println("debe correr colony");
+    	AdColonyV4VCAd v4vc_ad;
+    	v4vc_ad = new AdColonyV4VCAd( ZONE_ID2 ).withListener( app );
+    	v4vc_ad.show();
+    	return info;
+    }
+    
+    
+    //Ad Started Callback - called only when an ad successfully starts playing
+    public void onAdColonyAdStarted( AdColonyAd ad )
+    {
+  	Log.d("AdColony", "onAdColonyAdStarted");
+    }
+
+    //Ad Attempt Finished Callback - called at the end of any ad attempt - successful or not.
+    public void onAdColonyAdAttemptFinished( AdColonyAd ad )
+    {
+  	// You can ping the AdColonyAd object here for more information:
+  	// ad.shown() - returns true if the ad was successfully shown.
+  	// ad.notShown() - returns true if the ad was not shown at all (i.e. if onAdColonyAdStarted was never triggered)
+  	// ad.skipped() - returns true if the ad was skipped due to an interval play setting
+  	// ad.canceled() - returns true if the ad was cancelled (either programmatically or by the user)
+  	// ad.noFill() - returns true if the ad was not shown due to no ad fill.
+  	  
+      Log.d("AdColony", "onAdColonyAdAttemptFinished");
+     if(ad.skipped() || ad.canceled() || ad.noFill()){
+    	 return;
+     }
+      
+      if(ad.shown() && giveMoney){
+      app.runOnGLThread(new Runnable() {
+            @Override
+            public void run() {
+            	System.out.println("adcolony reward es: " + "ID_COLONYAD");
+            	String evalStr = "onBuySuccess("+20+ "," + true +")";
+         	   Cocos2dxJavascriptJavaBridge.evalString(evalStr);
+            }
+        });
+      }
+     
+    }
+    
+    //Ad Availability Change Callback - update button text
+    public void onAdColonyAdAvailabilityChange(boolean available, String zone_id) 
+    {
+    	//if (available) button_text_handler.post(button_text_runnable);
+    	 Log.d("AdColony", "listo para cobrar");
     }
     
 }

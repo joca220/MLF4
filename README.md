@@ -4,7 +4,7 @@
 * Android SDK **OR** Eclipse ADT Bundle
 * Android AVD target installed
 
-## Building project
+## Building projects
 
 There are two ways of building Android projects.
 
